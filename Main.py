@@ -1,19 +1,22 @@
-import time
 from datetime import datetime
 # from datetime import time
-from MainGameState import MainGameState
-from MainMenuState import MainMenuState
+
+from gamestates.MainMenuState import MainMenuState
+from gamestates.MainGameState import MainGameState
 
 __author__ = 'zadjii'
 
 
+MAIN_MENU_STATE_INDEX = 0
+MAIN_GAME_STATE_INDEX = 1
+
+main_menu_state = MainMenuState()
+main_game_state = MainGameState()
+
 class Game(object):
 
-    MAIN_MENU_STATE_INDEX = 0
-    MAIN_GAME_STATE_INDEX = 1
 
-    main_menu_state = MainMenuState()
-    main_game_state = MainGameState()
+
 
     game_states = {
         MAIN_MENU_STATE_INDEX:main_menu_state
@@ -55,10 +58,15 @@ class Game(object):
                 current_state.render( self.fg_buffer, self.bg0_buffer, self.bg1_buffer)
                 self.time_accumulator -= delta
                 self.total_time += delta
-            # if int(self.total_time) > last_sec:
+            if int(self.total_time) > last_sec:
             #     print frame_time, self.total_time
-            #     last_sec = int(self.total_time)
+            #     current_state.render( self.fg_buffer, self.bg0_buffer, self.bg1_buffer)
+                last_sec = int(self.total_time)
             # time.sleep(.1)
+            if self.total_time > 3:
+                current_state.switch_to(MAIN_GAME_STATE_INDEX)
+                main_game_state.switch_from(self.current_state_index)
+                self.current_state_index = MAIN_GAME_STATE_INDEX
             if self.total_time > 10:
                 request_exit()
     def init_screen(self):
