@@ -1,3 +1,5 @@
+import drawing
+
 __author__ = 'zadjii'
 
 class Entity(object):
@@ -11,8 +13,15 @@ class Entity(object):
         self.h = 0
 
     def tick(self, delta):
-        pass
+        self.x += delta * self.dx
+        self.y += delta * self.dy
 
     def render(self, fg_grid, bg0_grid, bg1_grid):
-        pass
+        fg_grid[self.intx()][self.inty()] = ('@', drawing.BLUE, drawing.CLEAR)
+
+    def intx(self):
+        return int(self.x)
+
+    def inty(self):
+        return int(self.y)
 

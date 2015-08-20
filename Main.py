@@ -1,6 +1,8 @@
 from datetime import datetime
 # from datetime import time
-
+from fcntl import fcntl, F_SETFL, F_GETFL
+from os import O_NONBLOCK
+import sys
 from gamestates.MainMenuState import MainMenuState
 from gamestates.MainGameState import MainGameState
 
@@ -26,7 +28,7 @@ class Game(object):
     current_state_index = MAIN_MENU_STATE_INDEX
     exit_requested = False
 
-    TIME_INCREMENT = (1.0/60.0)
+    TIME_INCREMENT = (1.0/10.0)
 
     screen_width = 0
     screen_height = 0
@@ -39,6 +41,12 @@ class Game(object):
         self.last_time = datetime.utcnow()
         self.time_accumulator = 0.0
         self.total_time = 0.0
+        # todo I'm creating here and assuming 32x32
+        # self.screen_width = self.screen_height = 16
+        self.screen_height = 16
+        self.screen_width = 32
+        self.init_screen()
+        # fcntl(sys.stdin, F_SETFL, fcntl(sys.stdin, F_GETFL) | O_NONBLOCK)
 
     def run(self):
         last_sec = 0
@@ -63,18 +71,28 @@ class Game(object):
             #     current_state.render( self.fg_buffer, self.bg0_buffer, self.bg1_buffer)
                 last_sec = int(self.total_time)
             # time.sleep(.1)
-            if self.total_time > 3:
+            if self.total_time > 1:
                 current_state.switch_to(MAIN_GAME_STATE_INDEX)
                 main_game_state.switch_from(self.current_state_index)
                 self.current_state_index = MAIN_GAME_STATE_INDEX
-            if self.total_time > 10:
+            if self.total_time > 5:
                 request_exit()
+
     def init_screen(self):
         #todo get screen w,h
         #todo set up fg,bg0/1 buffers.
         self.screen_initialized = True
-
-
+        self.fg_buffer = [
+                [ (' ', 9, 9) for y in range(0, self.screen_height)] for x in range(0, self.screen_width)
+            ]
+        self.bg0_buffer = [
+                [ (' ', 9, 9) for y in range(0, self.screen_height)] for x in range(0, self.screen_width)
+            ]
+        self.bg1_buffer = [
+                [ (' ', 9, 9) for y in range(0, self.screen_height)] for x in range(0, self.screen_width)
+            ]
+        for state in self.game_states.values():
+            state.set_screen_width_height((self.screen_width, self.screen_height))
 
 
 game = Game()
@@ -82,6 +100,8 @@ game = Game()
 def request_exit():
     global game
     game.exit_requested = True
+    from drawing import reset_sequence
+    print reset_sequence()
 
 
 if __name__ == '__main__':

@@ -2,6 +2,8 @@ __author__ = 'zadjii'
 
 
 class GameState(object):
+    _screen_width = 0
+    _screen_height = 0
     def tick(self, delta):
         pass
 
@@ -16,3 +18,7 @@ class GameState(object):
 
     def process_inputs(self, delta):
         pass
+
+    def set_screen_width_height(self, dimensions):
+        self._screen_width = dimensions[0]
+        self._screen_height = dimensions[1]
