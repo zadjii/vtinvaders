@@ -2,6 +2,8 @@
 
 A rudimentary implementation of space invaders that lets you play in your terminal window!
 Note: your terminal must support ANSI/VT100 escape sequences (sorry cmd.exe)
+
+
 =========================
 
 So, after a whole lot of investigation, I'm abandoning this project. I really
